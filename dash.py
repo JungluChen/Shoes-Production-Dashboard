@@ -94,6 +94,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 st.title("👟 Shoes Production Dashboard")
+st.markdown("""
+**Author:** CHEN JUNG-LU  
+**Email:** E1582484@u.nus.edu 
+""")
 st.markdown("---")
 
 # === KPI Section ===
