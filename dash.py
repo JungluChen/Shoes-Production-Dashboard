@@ -50,6 +50,10 @@ df, data_dict = load_data()
 #%%
 st.set_page_config(page_title="Shoes Production Dashboard", page_icon="👟", layout="wide")
 st.title("👟 Shoes Production Dashboard")
+st.markdown("""
+**Author:** CHEN JUNG-LU  
+**Email:** E1582484@u.nus.edu 
+""")
 st.markdown("---")
 
 # === KPI Section ===
