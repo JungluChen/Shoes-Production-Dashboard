@@ -98,6 +98,19 @@ st.markdown("---")
 
 # === KPI Section ===
 st.header("📊 Key Performance Indicators")
+# 创建KPI标准输入框
+st.sidebar.header("KPI Standards")
+oee_target = st.sidebar.slider("OEE Target (%)", 0, 100, 85) / 100
+# availability_target = st.sidebar.slider("Availability Target (%)", 0, 100, 90) / 100  
+# performance_target = st.sidebar.slider("Performance Target (%)", 0, 100, 95) / 100
+# quality_target = st.sidebar.slider("Quality Target (%)", 0, 100, 99) / 100
+# productivity_target = st.sidebar.number_input("Productivity Target (units/hr)", 0, 1000, 100)
+time_efficiency_target = st.sidebar.slider("Time Efficiency Target (%)", 0, 100, 95) / 100
+material_efficiency_target = st.sidebar.slider("Material Efficiency Target (%)", 0, 100, 90) / 100
+waste_target = st.sidebar.slider("Waste Target (%)", 0, 100, 5) / 100
+# downtime_target = st.sidebar.number_input("Downtime Target (hrs/step)", 0.0, 10.0, 1.0)
+# running_ratio_target = st.sidebar.slider("Running Steps Ratio Target (%)", 0, 100, 80) / 100
+# active_ratio_target = st.sidebar.slider("Active Steps Ratio Target (%)", 0, 100, 90) / 100
 
 # Calculate overall KPIs
 avg_oee = df['OEE'].mean()
@@ -109,65 +122,144 @@ total_material_used = df['Material Used (KG)'].sum()
 total_waste = df['Waste Materials (KG)'].sum()
 waste_percentage = (total_waste / total_material_used) * 100 if total_material_used > 0 else 0
 
-# Display KPIs in columns
+# Additional calculated metrics
+total_downtime = df['Process Down time'].sum()
+avg_downtime = df['Process Down time'].mean()
+total_expected_time = df['Expected Lot Run Time (Hours)'].sum()
+total_actual_time = df['Current Lot Run Time (Hours)'].sum()
+time_efficiency = (total_actual_time / total_expected_time) * 100 if total_expected_time > 0 else 0
+material_efficiency = ((total_material_used - total_waste) / total_material_used) * 100 if total_material_used > 0 else 0
+running_steps = len(df[df['Running Status'] == 'Running'])
+stopped_steps = len(df[df['Running Status'] == 'Stopped'])
+idle_steps = len(df[df['Running Status'] == 'Idle'])
+total_steps = len(df)
+productivity_rate = total_units / total_actual_time if total_actual_time > 0 else 0
+avg_failure_rate = df['Failure Rate'].mean()
+
+# Row 1: Core OEE Metrics
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
+    delta_oee = abs((avg_oee - oee_target)*100)
     st.metric(
-        label="Overall Equipment Effectiveness (OEE)",
+        label="🎯 Overall Equipment Effectiveness (OEE)",
         value=f"{avg_oee:.1%}",
-        delta=f"Target: 85%" if avg_oee >= 0.85 else f"Below Target: 85%"
+        delta=f"{delta_oee:.1f}%" if avg_oee >= oee_target else f"-{delta_oee:.1f}%",
     )
     
 with col2:
+
     st.metric(
-        label="Availability",
+        label="⚡ Availability",
         value=f"{avg_availability:.1%}",
-        delta=f"Target: 90%" if avg_availability >= 0.90 else f"Below Target: 90%"
     )
     
 with col3:
+
     st.metric(
-        label="Performance",
+        label="🚀 Performance",
         value=f"{avg_performance:.1%}",
-        delta=f"Target: 95%" if avg_performance >= 0.95 else f"Below Target: 95%"
     )
     
 with col4:
+
     st.metric(
-        label="Quality",
+        label="✅ Quality",
         value=f"{avg_quality:.1%}",
-        delta=f"Target: 99%" if avg_quality >= 0.99 else f"Below Target: 99%"
     )
 
-# Additional KPIs
+# Row 2: Production Metrics
 col5, col6, col7, col8 = st.columns(4)
 
 with col5:
+
     st.metric(
-        label="Total Units Produced",
-        value=f"{total_units:,.0f}"
+        label="📦 Total Units Produced",
+        value=f"{total_units:,.0f}",
     )
     
 with col6:
+
     st.metric(
-        label="Total Material Used (KG)",
-        value=f"{total_material_used:,.1f}"
+        label="⏱️ Total Production Time",
+        value=f"{total_actual_time:.1f} hrs",
     )
     
 with col7:
+
     st.metric(
-        label="Total Waste (KG)",
-        value=f"{total_waste:,.1f}"
+        label="⏸️ Total Downtime",
+        value=f"{total_downtime:.1f} hrs",
     )
     
 with col8:
+    delta_eff = abs((time_efficiency/100 - time_efficiency_target)*100)
     st.metric(
-        label="Waste Percentage",
-        value=f"{waste_percentage:.1f}%",
-        delta="Good" if waste_percentage < 5 else "High"
+        label="📈 Time Efficiency",
+        value=f"{time_efficiency:.1f}%",
+        delta=f" {delta_eff:.1f}%" if time_efficiency/100 >= time_efficiency_target else f" {delta_eff:.1f}%",
+        delta_color="normal" if time_efficiency/100 >= time_efficiency_target else "inverse"
     )
 
+# Row 3: Material & Quality Metrics
+col9, col10, col11, col12 = st.columns(4)
+
+with col9:
+    st.metric(
+        label="🏭 Total Material Used",
+        value=f"{total_material_used:,.1f} KG",
+    )
+    
+with col10:
+    st.metric(
+        label="🗑️ Total Waste",
+        value=f"{total_waste:,.1f} KG",
+    )
+    
+with col11:
+    delta_fail = abs((avg_failure_rate - waste_target)*100)
+    st.metric(
+        label="❌ Average Failure Rate",
+        value=f"{avg_failure_rate:.2%}",
+        delta=f" {delta_fail:.1f}%" if avg_failure_rate <= waste_target else f" {delta_fail:.1f}%",
+        delta_color="normal" if avg_failure_rate <= waste_target else "inverse"
+    )
+    
+with col12:
+    delta_mateff = abs((material_efficiency/100 - material_efficiency_target)*100)
+    st.metric(
+        label="♻️ Material Efficiency",
+        value=f"{material_efficiency:.1f}%",
+        delta=f" {delta_mateff:.1f}%" if material_efficiency/100 >= material_efficiency_target else f" {delta_mateff:.1f}%",
+        delta_color="normal" if material_efficiency/100 >= material_efficiency_target else "inverse"
+    )
+
+# Row 4: Status & Operational Metrics
+col13, col14, col15, col16 = st.columns(4)
+
+with col13:
+    st.metric(
+        label="🟢 Running Steps",
+        value=f"{running_steps}",
+    )
+    
+with col14:
+    st.metric(
+        label="🔴 Stopped Steps",
+        value=f"{stopped_steps}",
+   )
+    
+with col15:
+    st.metric(
+        label="🟡 Idle Steps",
+        value=f"{idle_steps}",
+    )
+    
+with col16:
+    st.metric(
+        label="📊 Total Production Steps",
+        value=f"{total_steps}",
+    )
 st.markdown("---")
 
 # === Charts Section ===
