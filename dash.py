@@ -48,12 +48,52 @@ def load_data():
 
 df, data_dict = load_data()
 #%%
-st.set_page_config(page_title="Shoes Production Dashboard", page_icon="👟", layout="wide")
-st.title("👟 Shoes Production Dashboard")
+st.set_page_config(
+    page_title="Shoes Production Dashboard", 
+    page_icon="👟", 
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://www.streamlit.io/community',
+        'Report a bug': "https://www.streamlit.io/community",
+        'About': "# Shoes Production Dashboard\nThis is a comprehensive OEE dashboard for production monitoring."
+    }
+)
+
+# Set dark theme using custom CSS
 st.markdown("""
-**Author:** CHEN JUNG-LU  
-**Email:** E1582484@u.nus.edu 
-""")
+<style>
+    .stApp {
+        background-color: #0e1117;
+        color: #fafafa;
+    }
+    .stMetric {
+        background-color: #262730;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #464853;
+    }
+    .stTabs [data-baseweb="tab-list"] {
+        background-color: #262730;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: #262730;
+        color: #fafafa;
+    }
+    .stSelectbox > div > div {
+        background-color: #262730;
+        color: #fafafa;
+    }
+    .stMultiSelect > div > div {
+        background-color: #262730;
+        color: #fafafa;
+    }
+    .stSlider > div > div {
+        background-color: #262730;
+    }
+</style>
+""", unsafe_allow_html=True)
+st.title("👟 Shoes Production Dashboard")
 st.markdown("---")
 
 # === KPI Section ===
