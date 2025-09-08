@@ -197,8 +197,7 @@ with col8:
     st.metric(
         label="📈 Time Efficiency",
         value=f"{time_efficiency:.1f}%",
-        delta=f" {delta_eff:.1f}%" if time_efficiency/100 >= time_efficiency_target else f" {delta_eff:.1f}%",
-        delta_color="normal" if time_efficiency/100 >= time_efficiency_target else "inverse"
+        delta=f" {delta_eff:.1f}%" if time_efficiency/100 >= time_efficiency_target else f"-{delta_eff:.1f}%",
     )
 
 # Row 3: Material & Quality Metrics
@@ -221,8 +220,7 @@ with col11:
     st.metric(
         label="❌ Average Failure Rate",
         value=f"{avg_failure_rate:.2%}",
-        delta=f" {delta_fail:.1f}%" if avg_failure_rate <= waste_target else f" {delta_fail:.1f}%",
-        delta_color="normal" if avg_failure_rate <= waste_target else "inverse"
+        delta=f" {delta_fail:.1f}%" if avg_failure_rate <= waste_target else f"-{delta_fail:.1f}%",
     )
     
 with col12:
@@ -230,8 +228,7 @@ with col12:
     st.metric(
         label="♻️ Material Efficiency",
         value=f"{material_efficiency:.1f}%",
-        delta=f" {delta_mateff:.1f}%" if material_efficiency/100 >= material_efficiency_target else f" {delta_mateff:.1f}%",
-        delta_color="normal" if material_efficiency/100 >= material_efficiency_target else "inverse"
+        delta=f" {delta_mateff:.1f}%" if material_efficiency/100 >= material_efficiency_target else f"-{delta_mateff:.1f}%",
     )
 
 # Row 4: Status & Operational Metrics
